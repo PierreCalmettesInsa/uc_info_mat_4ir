@@ -43,12 +43,12 @@ int main(void)
 	GPIOC -> CRH |= (0x1 << GPIO_CRH_CNF8_Pos);
 	
 	//PC10 en mode output pushpull
-	//GPIOC -> CRH &= ~(0xf << GPIO_CRH_MODE10_Pos);
-	//GPIOC -> CRH |= (0x2 << GPIO_CRH_MODE10_Pos);
+	GPIOC -> CRH &= ~(0xf << GPIO_CRH_MODE10_Pos);
+	GPIOC -> CRH |= (0x2 << GPIO_CRH_MODE10_Pos);
 	
 	//PC10 en mode open drain
-	GPIOC -> CRH |= (0x1 << GPIO_CRH_CNF10_Pos);
-	GPIOC -> CRH |= (0x1 << GPIO_CRH_MODE10_Pos);
+	//GPIOC -> CRH |= (0x1 << GPIO_CRH_CNF10_Pos);
+	//GPIOC -> CRH |= (0x1 << GPIO_CRH_MODE10_Pos);
 	
 
   /* Add your application code here */

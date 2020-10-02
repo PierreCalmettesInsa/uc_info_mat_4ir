@@ -16,7 +16,7 @@ Utilise la lib MyTimers.h /.c
 
 
 // variable privée de type Time qui mémorise la durée mesurée
-static Time Chrono_Time; // rem : static rend la visibilité de la variable Chrono_Time limitée à ce fichier 
+Time Chrono_Time; // rem : static rend la visibilité de la variable Chrono_Time limitée à ce fichier 
 
 // variable privée qui mémorise pour le module le timer utilisé par le module
 static TIM_TypeDef * Chrono_Timer=TIM1; // init par défaut au cas où l'utilisateur ne lance pas Chrono_Conf avant toute autre fct.
@@ -31,27 +31,34 @@ void Chrono_Conf_io(void){
 	LL_GPIO_InitTypeDef pin8 ;
 	pin8.Pin = LL_GPIO_PIN_8 ;
 	pin8.Mode = LL_GPIO_MODE_FLOATING;
+	pin8.Speed = LL_GPIO_SPEED_FREQ_LOW;
+	pin8.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+	pin8.Pull = LL_GPIO_PULL_DOWN;
 	LL_GPIO_Init(GPIOC,&pin8);
 	
 	LL_GPIO_InitTypeDef pin10 ;
 	pin10.Pin = LL_GPIO_PIN_10 ;
 	pin10.Mode = LL_GPIO_MODE_OUTPUT;
-	pin10.OutputType = LL_GPIO_OUTPUT_OPENDRAIN ;
+	pin10.OutputType = LL_GPIO_OUTPUT_PUSHPULL ;
+	pin10.Pull = LL_GPIO_PULL_DOWN;
+	pin10.Speed = LL_GPIO_SPEED_FREQ_LOW;
 	LL_GPIO_Init(GPIOC,&pin10);
+	
+	LL_GPIO_InitTypeDef pin13 ;
+	pin13.Pin = LL_GPIO_PIN_13 ;
+	pin13.Mode = LL_GPIO_MODE_FLOATING;
+	pin13.Speed = LL_GPIO_SPEED_FREQ_LOW;
+	pin13.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+	pin13.Pull = LL_GPIO_PULL_DOWN;
+	LL_GPIO_Init(GPIOC,&pin13);
+	
+	
+	
+	
 	
 }
 
-void Chrono_Background(void)
-{
-	//if (PinStart
-	//if (LL_TIM_IsEnabledCounter(Chrono_Timer)){
-		
-		
-		
-	//}
-	
-	
-}
+
 
 
 
@@ -139,6 +146,23 @@ Time * Chrono_Read(void)
 	return &Chrono_Time;
 }
 
+void Chrono_Background(void)
+{
+	if (LL_GPIO_IsInputPinSet(GPIOC,PinStart)){
+			Chrono_Stop();
+	}
+	else
+	{
+		Chrono_Start();
+	}
+	
+	if (!LL_GPIO_IsInputPinSet(GPIOC,LL_GPIO_PIN_13)){
+		Chrono_Reset();
+	}
+	
+	
+}
+
 
 
 
@@ -153,6 +177,7 @@ void Chrono_Task_10ms(void)
 	Chrono_Time.Hund++;
 	if (Chrono_Time.Hund==100)
 	{
+		LL_GPIO_TogglePin(GPIOC,PinLED);
 		Chrono_Time.Sec++;
 		Chrono_Time.Hund=0;
 	}
