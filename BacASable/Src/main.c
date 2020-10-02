@@ -36,15 +36,20 @@ int main(void)
   /* Configure the system clock to 72 MHz */
   SystemClock_Config();
 	
+	RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
+	
 	//PC8 en mode floating input
 	GPIOC -> CRH &= ~(0xf << GPIO_CRH_MODE8_Pos);
 	GPIOC -> CRH |= (0x1 << GPIO_CRH_CNF8_Pos);
 	
 	//PC10 en mode output pushpull
-	GPIOC -> CRH &= ~(0xf << GPIO_CRH_MODE10_Pos);
-	GPIOC -> CRH |= (0x2 << GPIO_CRH_MODE10_Pos);
+	//GPIOC -> CRH &= ~(0xf << GPIO_CRH_MODE10_Pos);
+	//GPIOC -> CRH |= (0x2 << GPIO_CRH_MODE10_Pos);
 	
-	//On met 1 dans ODR8
+	//PC10 en mode open drain
+	GPIOC -> CRH |= (0x1 << GPIO_CRH_CNF10_Pos);
+	GPIOC -> CRH |= (0x1 << GPIO_CRH_MODE10_Pos);
+	
 
   /* Add your application code here */
   // Configuration chronomètre
@@ -57,6 +62,13 @@ int main(void)
   /* Infinite loop */
   while (1)
   {
+		if (GPIOC -> IDR & GPIO_IDR_IDR8){
+			GPIOC -> ODR |= GPIO_ODR_ODR10 ;
+		}
+		else
+		{
+			GPIOC -> ODR &= ~(GPIO_ODR_ODR10) ;
+		}
   }
 }
 
